@@ -1,6 +1,6 @@
 # Doc2Vec Configuration
 sources:
-  # GitHub Sources
+  # GitHub Sources (GitHub.com example)
   - type: github
     product_name: 'istio'
     version: 'latest'
@@ -11,6 +11,19 @@ sources:
       type: 'sqlite'
       params:
         db_path: './istio-issues.db'
+
+  # GitHub Enterprise example (uncomment and configure to use)
+  # - type: github
+  #   product_name: 'my-enterprise-project'
+  #   version: 'latest'
+  #   repo: 'organization/repo'
+  #   start_date: '2025-01-01'
+  #   github_base_url: 'https://git.enterprise.org'  # Your GitHub Enterprise URL
+  #   max_size: 1048576
+  #   database_config:
+  #     type: 'sqlite'
+  #     params:
+  #       db_path: './enterprise-issues.db'
 
   # Website Sources
   - type: website

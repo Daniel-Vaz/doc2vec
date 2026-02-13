@@ -99,7 +99,7 @@ This ensures that searches for parent topics (like "Installation") will also mat
 *   **npm:** Node Package Manager (usually comes with Node.js).
 *   **TypeScript:** As the project is written in TypeScript (`ts-node` is used for execution via `npm start`).
 *   **OpenAI API Key or Azure OpenAI Credentials:** You need either an OpenAI API key or Azure OpenAI credentials to generate embeddings.
-*   **GitHub Personal Access Token:** Required for accessing GitHub issues (set as `GITHUB_PERSONAL_ACCESS_TOKEN` in your environment).
+*   **GitHub Personal Access Token:** Required for accessing GitHub issues (set as `GITHUB_PERSONAL_ACCESS_TOKEN` in your environment). Works with both GitHub.com and GitHub Enterprise instances.
 *   **Zendesk API Token:** Required for accessing Zendesk tickets and articles (set as `ZENDESK_API_TOKEN` in your environment).
 *   **(Optional) Qdrant Instance:** If using the `qdrant` database type, you need a running Qdrant instance accessible from where you run the script.
 *   **(Optional) Build Tools:** Dependencies like `better-sqlite3` and `sqlite-vec` might require native compilation, which could necessitate build tools like `python`, `make`, and a C++ compiler (like `g++` or Clang) depending on your operating system.
@@ -169,6 +169,7 @@ Configuration is managed through two files:
         For GitHub repositories (`type: 'github'`):
         *   `repo`: Repository name in the format `'owner/repo'` (e.g., `'istio/istio'`).
         *   `start_date`: (Optional) Starting date to fetch issues from (e.g., `'2025-01-01'`).
+        *   `github_base_url`: (Optional) Base URL for GitHub Enterprise instances (e.g., `'https://git.enterprise.org'`). Defaults to `'https://github.com'` for GitHub.com.
         
         For local directories (`type: 'local_directory'`):
         *   `path`: Path to the local directory to process.
@@ -183,6 +184,7 @@ Configuration is managed through two files:
         *   `path`: Path to the local directory (required when `source: 'local_directory'`).
         *   `repo`: Repository name in the format `'owner/repo'` (required when `source: 'github'`).
         *   `branch`: (Optional) Branch to clone for GitHub sources.
+        *   `github_base_url`: (Optional) Base URL for GitHub Enterprise instances (e.g., `'https://git.enterprise.org'`). Defaults to `'https://github.com'` for GitHub.com.
         *   `include_extensions`: (Optional) Array of file extensions to include (defaults to common code extensions).
         *   `exclude_extensions`: (Optional) Array of file extensions to exclude.
         *   `recursive`: (Optional) Whether to traverse subdirectories (defaults to `true`).

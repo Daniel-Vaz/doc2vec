@@ -30,6 +30,7 @@ export interface GithubSourceConfig extends BaseSourceConfig {
     type: 'github';
     repo: string;
     start_date?: string;
+    github_base_url?: string;      // Optional GitHub Enterprise base URL (e.g., 'https://git.enterprise.org'). Defaults to 'https://github.com'
 }
 
 // Configuration specific to Zendesk sources
@@ -52,6 +53,7 @@ export interface CodeSourceConfig extends BaseSourceConfig {
     path?: string;                 // Path to the local directory (when source=local_directory)
     repo?: string;                 // Repo in 'owner/repo' format (when source=github)
     branch?: string;               // Optional branch to clone (github only)
+    github_base_url?: string;      // Optional GitHub Enterprise base URL (e.g., 'https://git.enterprise.org'). Defaults to 'https://github.com'
     include_extensions?: string[]; // File extensions to include (e.g., ['.ts', '.py'])
     exclude_extensions?: string[]; // File extensions to exclude
     recursive?: boolean;           // Whether to traverse subdirectories

@@ -166,7 +166,14 @@ export class Doc2Vec {
 
     private async fetchAndProcessGitHubIssues(repo: string, sourceConfig: GithubSourceConfig, dbConnection: DatabaseConnection, logger: Logger): Promise<void> {
         const [owner, repoName] = repo.split('/');
-        const GITHUB_API_URL = `https://api.github.com/repos/${owner}/${repoName}/issues`;
+        
+        // Support GitHub Enterprise with configurable base URL
+        const baseUrl = sourceConfig.github_base_url || 'https://github.com';
+        const isGitHubEnterprise = baseUrl !== 'https://github.com';
+        const apiUrl = isGitHubEnterprise 
+            ? `${baseUrl}/api/v3/repos/${owner}/${repoName}/issues`  // GHE API path
+            : `https://api.github.com/repos/${owner}/${repoName}/issues`;  // GitHub.com API path
+        const GITHUB_API_URL = apiUrl;
         
         // Initialize metadata storage if needed
         await DatabaseManager.initDatabaseMetadata(dbConnection, logger);
@@ -302,7 +309,8 @@ export class Doc2Vec {
         // Process a single issue and store its chunks
         const processIssue = async (issue: any): Promise<void> => {
             const issueNumber = issue.number;
-            const url = `https://github.com/${repo}/issues/${issueNumber}`;
+            const baseUrl = sourceConfig.github_base_url || 'https://github.com';
+            const url = `${baseUrl}/${repo}/issues/${issueNumber}`;
             
             logger.info(`Processing issue #${issueNumber}`);
             
@@ -1082,9 +1090,14 @@ export class Doc2Vec {
         const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'doc2vec-code-'));
         const requestedBranch = config.branch;
         const encodedToken = GITHUB_TOKEN ? encodeURIComponent(GITHUB_TOKEN) : '';
+        
+        // Support GitHub Enterprise with configurable base URL
+        const baseUrl = config.github_base_url || 'https://github.com';
+        const gitHost = baseUrl.replace(/^https?:\/\//, '');  // Extract host from URL
+        
         const repoUrl = encodedToken
-            ? `https://x-access-token:${encodedToken}@github.com/${repo}.git`
-            : `https://github.com/${repo}.git`;
+            ? `https://x-access-token:${encodedToken}@${gitHost}/${repo}.git`
+            : `${baseUrl}/${repo}.git`;
 
         const branchArg = requestedBranch ? `--branch "${requestedBranch}"` : '';
         logger.info(`Cloning ${repo} to ${tempDir}`);
@@ -1107,7 +1120,8 @@ export class Doc2Vec {
         }
 
         const branch = resolvedBranch || 'main';
-        const urlPrefix = `https://github.com/${repo}/blob/${branch}`;
+        const githubBaseUrl = config.github_base_url || 'https://github.com';
+        const urlPrefix = `${githubBaseUrl}/${repo}/blob/${branch}`;
 
         return { path: tempDir, branch, urlPrefix };
     }
